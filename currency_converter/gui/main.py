@@ -3,12 +3,14 @@ import tkinter as tk
 from tkinter import ttk
 
 URL = "http://127.0.0.1:5000/convert"
+CURRENCIES = ["USD","EUR","GBP","CHF","CAD","RUB","AED","AUD","DKK","SEK",
+              "NOK","JPY","KWD","ZAR","BHD","LYD","SAR","IQD","ILS","IRR",
+              "INR","MXN","HUF","NZD","BRL","IDR","CZK","PLN","RON","CNY",
+              "ARS","ALL","AZN","BAM","CLP","COP","CRC","DZD","EGP","HKD",
+              "HRK","ISK","JOD","KRW","KZT","LBP","LKR","MAD","MDL","MKD",
+              "MYR","OMR","PEN","PHP","PKR","QAR","RSD","SGD","SYP","THB",
+              "TWD","UAH","UYU","GEL","TND","BGN", "TRY"]
 
-data = {
-    "curr_from":"USD", 
-    "curr_to":"EUR", 
-    "amount": 1000
-}
 
 def submit_button_click():
     data = {
@@ -21,6 +23,17 @@ def submit_button_click():
     print("Response Status Code: ", response.status_code)
     print("Response Content: ", response.text)
     label_ca.config(text=responseJ["converted_amount"])
+    
+    
+def validate_numeric_input(P):
+    # Check if the input is numeric
+    if P == "":
+        return True
+    try:
+        float(P)
+        return True
+    except ValueError:
+        return False
     
     
 # Create the main window
@@ -36,10 +49,17 @@ label4 = tk.Label(root, text="Amount:\t\t")
 label_ca = tk.Label(root, text="0 ")
 
 
-combobox1 = ttk.Combobox(root, values=["USD", "EUR", "GBP", "TRY"])
-combobox2 = ttk.Combobox(root, values=["USD", "EUR", "GBP", "TRY"])
+combobox1 = ttk.Combobox(root, values=CURRENCIES)
+combobox2 = ttk.Combobox(root, values=CURRENCIES)
+combobox1.configure(state="readonly")
+combobox2.configure(state="readonly")
+combobox1.set("USD")
+combobox2.set("EUR")
 
-text_field = tk.Entry(root)
+
+validate_numeric = root.register(validate_numeric_input)
+text_field = tk.Entry(root, validate="key", 
+                      validatecommand=(validate_numeric, "%P"))
 
 submit_button = tk.Button(root, text="Convert", command=submit_button_click)
 
@@ -55,7 +75,8 @@ label3.grid(row=2, column=0, padx=padx_value, pady=pady_value)
 combobox2.grid(row=2, column=1, padx=padx_value, pady=pady_value)
 label4.grid(row=3, column=0, padx=padx_value, pady=pady_value)
 text_field.grid(row=3, column=1, padx=padx_value, pady=pady_value)
-submit_button.grid(row=4, column=0, columnspan=2, padx=padx_value, pady=pady_value)
+submit_button.grid(row=4, column=0, columnspan=2, 
+                   padx=padx_value, pady=pady_value)
 
 
 # Start the Tkinter main loop
